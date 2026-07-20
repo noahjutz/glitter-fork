@@ -37,11 +37,19 @@ int main() {
 
   glfwSetFramebufferSizeCallback(mWindow, framebuffer_size_callback);
 
-  // Load vertices
+  // Load vertices into VBO and bind to VAO
+
+  unsigned int VAO;
+  glGenVertexArrays(1, &VAO);
+  glBindVertexArray(VAO);
+
   unsigned int VBO;
   glGenBuffers(1, &VBO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // layout (loaction = 0) in vec3 aPos
+  glEnableVertexAttribArray(0);
 
   // Load vertex shader
 
@@ -116,6 +124,7 @@ int main() {
     // Background Fill Color
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // Flip Buffers and Draw
     glfwSwapBuffers(mWindow);
