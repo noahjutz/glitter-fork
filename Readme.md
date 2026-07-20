@@ -1,5 +1,7 @@
 # Glitter Fork
 
+OpenGL Program following the [https://learnopengl.com](LearnOpenGL) tutorial.
+
 For more information about Glitter, see https://github.com/Polytonic/Glitter.
 
 ## Getting Started
@@ -9,7 +11,7 @@ For more information about Glitter, see https://github.com/Polytonic/Glitter.
 cmake -B Build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DASSIMP_BUILD_ZLIB=ON .
 
 # Compile
-cmake --build Build -j$(nproc) &&
+cmake --build Build -j$(nproc)
 
 # Run
 ./Build/Glitter/Glitter
