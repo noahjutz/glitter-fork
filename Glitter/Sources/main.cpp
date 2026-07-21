@@ -73,10 +73,11 @@ int main() {
   const char *vertexShaderSource =
       "#version 330 core\n"
       "layout (location = 0) in vec3 aPos;\n"
+      "uniform float uniOff;\n"
       "out vec4 vertexColor;\n"
       "void main()\n"
       "{\n"
-      "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+      "   gl_Position = vec4(aPos.x + uniOff, aPos.y, aPos.z, 1.0);\n"
       "   vertexColor = vec4(1.0, 0.5, 0.5, 1.0);\n"
       "}\0";
 
@@ -134,8 +135,9 @@ int main() {
 
   const char *fragmentShader2Source = "#version 330 core\n"
                                       "out vec4 FragColor;\n"
+                                      "uniform vec4 uniCol;\n"
                                       "void main() {\n"
-                                      "FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
+                                      "FragColor = uniCol;\n"
                                       "}\0";
 
   unsigned int fragmentShader2;
@@ -174,16 +176,31 @@ int main() {
     if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(mWindow, true);
 
+    float t = glfwGetTime();
+
     // Background Fill Color
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(VAO1);
     glUseProgram(shaderProgram1);
+
+    float offset = sin(t);
+    int vertexOffsetLocation = glGetUniformLocation(shaderProgram1, "uniOff");
+    glUniform1f(vertexOffsetLocation, offset);
+
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     glBindVertexArray(VAO2);
     glUseProgram(shaderProgram2);
+
+    // Uniform fg color
+
+    float r = (sin(t) + 1) / 2;
+    float g = (cos(t) + 1) / 2;
+    int vertexColorLocation = glGetUniformLocation(shaderProgram2, "uniCol");
+    glUniform4f(vertexColorLocation, r, g, 0.0f, 0.0f);
+
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // Flip Buffers and Draw
