@@ -51,7 +51,10 @@ int main() {
 
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
                         (void *)0); // layout (loaction = 0) in vec3 aPos
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                        (void *)(3 * sizeof(float)));
   glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
 
   // Load triangle 2
 
@@ -73,12 +76,13 @@ int main() {
   const char *vertexShaderSource =
       "#version 330 core\n"
       "layout (location = 0) in vec3 aPos;\n"
+      "layout (location = 1) in vec3 aCol;\n"
       "uniform float uniOff;\n"
       "out vec4 vertexColor;\n"
       "void main()\n"
       "{\n"
       "   gl_Position = vec4(aPos.x + uniOff, aPos.y, aPos.z, 1.0);\n"
-      "   vertexColor = vec4(1.0, 0.5, 0.5, 1.0);\n"
+      "   vertexColor = vec4(aCol, 1.0);\n"
       "}\0";
 
   unsigned int vertexShader;
