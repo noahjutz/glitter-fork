@@ -78,7 +78,7 @@ int main() {
   Shader p1 =
       Shader("Glitter/Shaders/myvert.vert", "Glitter/Shaders/myfrag.frag");
 
-  glm::mat4 trans = glm::scale(glm::mat4(1.0), glm::vec3(2.0));
+  glm::mat4 trans = glm::scale(glm::mat4(1.0), glm::vec3(0.5));
 
   // Rendering Loop
   while (glfwWindowShouldClose(mWindow) == false) {

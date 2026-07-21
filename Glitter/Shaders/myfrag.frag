@@ -3,7 +3,8 @@
 out vec4 FragColor;
 
 in vec4 col;
+in vec4 pos;
 
 void main() {
-    FragColor = col;
+    FragColor = abs(pos);
 }
