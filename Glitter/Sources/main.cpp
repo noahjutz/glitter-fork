@@ -87,8 +87,11 @@ int main() {
 
     float t = glfwGetTime();
 
-    glm::mat4 R = glm::mat4_cast(
-        glm::angleAxis(t * glm::two_pi<float>(), glm::vec3(1.0, 0.0, 0.0)));
+    glm::mat4 R = glm::mat4_cast(glm::angleAxis(
+        (1.0f / 10.0f) * t * glm::two_pi<float>(), glm::vec3(1.0, 0.0, 0.0)));
+
+    R[3][0] = sin(t) / 2;
+    R[3][1] = cos(t) / 2;
 
     // Background Fill Color
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
