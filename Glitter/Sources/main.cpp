@@ -1,5 +1,6 @@
 // Local Headers
 #include "glitter.hpp"
+#include "glm/ext/matrix_float4x4.hpp"
 #include "shader.hpp"
 #include "vertices.hpp"
 
@@ -77,6 +78,8 @@ int main() {
   Shader p1 =
       Shader("Glitter/Shaders/myvert.vert", "Glitter/Shaders/myfrag.frag");
 
+  glm::mat4 trans = glm::scale(glm::mat4(1.0), glm::vec3(2.0));
+
   // Rendering Loop
   while (glfwWindowShouldClose(mWindow) == false) {
     if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -90,6 +93,7 @@ int main() {
 
     glBindVertexArray(VAO1);
     p1.use();
+    p1.setMat("trans", trans);
     float offset = sin(t) * 0.5;
     p1.setFloat("uniOff", offset);
     glDrawArrays(GL_TRIANGLES, 0, 3);
