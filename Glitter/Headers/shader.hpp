@@ -60,7 +60,7 @@ inline Shader::Shader(const char *vertexPath, const char *fragmentPath) {
   glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
   if (!success) {
     glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-    std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED" << std::endl
+    std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED" << std::endl
               << infoLog << std::endl;
   }
 
