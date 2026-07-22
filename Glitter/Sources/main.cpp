@@ -38,7 +38,7 @@ int main() {
 
   glfwSetFramebufferSizeCallback(mWindow, framebuffer_size_callback);
 
-  // Load triangle 1
+  // Load vertices and indices
 
   unsigned int VAO1;
   glGenVertexArrays(1, &VAO1);
@@ -70,7 +70,9 @@ int main() {
   Shader p1 =
       Shader("Glitter/Shaders/myvert.vert", "Glitter/Shaders/myfrag.frag");
 
-  glm::mat4 trans = glm::mat4(1.0);
+  p1.use();
+  p1.setInt("texture1", 0);
+  p1.setInt("texture2", 1);
 
   // Texture 1: Container
 
@@ -130,7 +132,6 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(VAO1);
-    p1.use();
     p1.setMat("trans", R);
     float offset = sin(t) * 0.5;
     p1.setFloat("uniOff", offset);
