@@ -59,6 +59,12 @@ int main() {
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
 
+  unsigned int EBO1;
+  glGenBuffers(1, &EBO1);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO1);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
+               GL_STATIC_DRAW);
+
   // Create shader program
 
   Shader p1 =
@@ -113,7 +119,7 @@ int main() {
     p1.setMat("trans", R);
     float offset = sin(t) * 0.5;
     p1.setFloat("uniOff", offset);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     // Flip Buffers and Draw
     glfwSwapBuffers(mWindow);
