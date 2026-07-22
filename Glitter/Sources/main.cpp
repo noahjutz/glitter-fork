@@ -69,11 +69,14 @@ int main() {
   // Create shader program
 
   Shader p1 =
-      Shader("Glitter/Shaders/myvert.vert", "Glitter/Shaders/myfrag.frag");
+      Shader("Glitter/Shaders/default.vert", "Glitter/Shaders/textured.frag");
 
   p1.use();
   p1.setInt("texture1", 0);
   p1.setInt("texture2", 1);
+
+  Shader p2 =
+      Shader("Glitter/Shaders/default.vert", "Glitter/Shaders/default.frag");
 
   // Texture 1: Container
 
@@ -136,18 +139,29 @@ int main() {
     glm::mat4 T = glm::translate(glm::mat4(1.0), glm::vec3(0.5, 0.5, 0.0));
     glm::mat4 R = glm::mat4_cast(
         glm::angleAxis(t, glm::normalize(glm::vec3(0.0, 0.0, 1.0))));
+    glm::mat4 S = glm::scale(glm::mat4(1.0), glm::vec3(0.5));
+    glm::mat4 S2 = glm::scale(glm::mat4(1.0), glm::vec3(sin(t)));
 
-    glm::mat4 M = R * R * R * R * R * R;
+    glm::mat4 M1 = R * S;
+    glm::mat4 M2 = T * S2;
 
     // Background Fill Color
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(VAO1);
-    p1.setMat("trans", M);
+
+    p1.use();
+    p1.setMat("trans", M1);
     float offset = sin(t) * 0.5;
     p1.setFloat("uniOff", offset);
+
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    p2.use();
+    p2.setMat("trans", M2);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,
+                   (void *)(6 * sizeof(float)));
 
     // Flip Buffers and Draw
     glfwSwapBuffers(mWindow);
