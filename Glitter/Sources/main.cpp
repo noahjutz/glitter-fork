@@ -59,21 +59,6 @@ int main() {
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
 
-  // Load triangle 2
-
-  unsigned int VAO2;
-  glGenVertexArrays(1, &VAO2);
-  glBindVertexArray(VAO2);
-
-  unsigned int VBO2;
-  glGenBuffers(1, &VBO2);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO2);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_tri2), vertices_tri2,
-               GL_STATIC_DRAW);
-
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-  glEnableVertexAttribArray(0);
-
   // Create shader program
 
   Shader p1 =
@@ -129,11 +114,6 @@ int main() {
     float offset = sin(t) * 0.5;
     p1.setFloat("uniOff", offset);
     glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    // glBindVertexArray(VAO2);
-    // float r = (sin(t) + 1) / 2;
-    // float g = (cos(t) + 1) / 2;
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // Flip Buffers and Draw
     glfwSwapBuffers(mWindow);
