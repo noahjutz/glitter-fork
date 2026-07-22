@@ -1,6 +1,7 @@
 // Local Headers
 #include "glitter.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
+#include "glm/ext/vector_float4.hpp"
 #include "shader.hpp"
 #include "vertices.hpp"
 
@@ -90,11 +91,13 @@ int main() {
   glGenTextures(2, textures);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, textures[0]);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                   GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
                GL_UNSIGNED_BYTE, data);
   glGenerateMipmap(GL_TEXTURE_2D);
@@ -111,6 +114,13 @@ int main() {
 
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, textures[1]);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_LINEAR_MIPMAP_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, data);
   glGenerateMipmap(GL_TEXTURE_2D);
@@ -134,7 +144,7 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(VAO1);
-    p1.setMat("trans", R);
+    p1.setMat("trans", glm::mat4(1.0f));
     float offset = sin(t) * 0.5;
     p1.setFloat("uniOff", offset);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
