@@ -72,27 +72,42 @@ int main() {
 
   glm::mat4 trans = glm::mat4(1.0);
 
-  // Textures
+  // Texture 1: Container
 
   int width, height, nrChannels;
   unsigned char *data = stbi_load("Glitter/Resources/container.jpg", &width,
                                   &height, &nrChannels, 0);
-
   if (data == nullptr) {
     std::cout << "container.jpg not found" << std::endl;
     return 1;
   }
 
-  unsigned int texture;
-  glGenTextures(1, &texture);
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, texture);
+  unsigned int textures[2];
+  glGenTextures(2, textures);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, textures[0]);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                   GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+               GL_UNSIGNED_BYTE, data);
+  glGenerateMipmap(GL_TEXTURE_2D);
+  stbi_image_free(data);
+
+  // Texture 2: Awesomeface
+
+  data = stbi_load("Glitter/Resources/awesomeface.png", &width, &height,
+                   &nrChannels, 0);
+  if (data == nullptr) {
+    std::cout << "awesomeface.png not found" << std::endl;
+    return 1;
+  }
+
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, textures[1]);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, data);
   glGenerateMipmap(GL_TEXTURE_2D);
   stbi_image_free(data);
@@ -114,7 +129,6 @@ int main() {
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glBindTexture(GL_TEXTURE_2D, texture);
     glBindVertexArray(VAO1);
     p1.use();
     p1.setMat("trans", R);
