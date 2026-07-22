@@ -133,18 +133,18 @@ int main() {
 
     float t = glfwGetTime();
 
-    glm::mat4 R = glm::mat4_cast(glm::angleAxis(
-        (1.0f / 10.0f) * t * glm::two_pi<float>(), glm::vec3(1.0, 0.0, 0.0)));
+    glm::mat4 T = glm::translate(glm::mat4(1.0), glm::vec3(0.5, 0.5, 0.0));
+    glm::mat4 R = glm::mat4_cast(
+        glm::angleAxis(t, glm::normalize(glm::vec3(0.0, 0.0, 1.0))));
 
-    R[3][0] = sin(t) / 2;
-    R[3][1] = cos(t) / 2;
+    glm::mat4 M = R * R * R * R * R * R;
 
     // Background Fill Color
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glBindVertexArray(VAO1);
-    p1.setMat("trans", glm::mat4(1.0f));
+    p1.setMat("trans", M);
     float offset = sin(t) * 0.5;
     p1.setFloat("uniOff", offset);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
