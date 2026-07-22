@@ -76,6 +76,8 @@ int main() {
 
   // Texture 1: Container
 
+  stbi_set_flip_vertically_on_load(true);
+
   int width, height, nrChannels;
   unsigned char *data = stbi_load("Glitter/Resources/container.jpg", &width,
                                   &height, &nrChannels, 0);
