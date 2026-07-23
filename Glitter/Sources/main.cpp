@@ -14,6 +14,7 @@
 #include <cstdlib>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+glm::mat4 transformation();
 
 int main() {
 
@@ -129,21 +130,19 @@ int main() {
   glGenerateMipmap(GL_TEXTURE_2D);
   stbi_image_free(data);
 
+  glm::mat4 M(1.0f);
+  M = glm::rotate(M, glm::radians(-55.0f), glm::vec3(1.0, 0.0, 0.0));
+
+  glm::mat4 V(1.0f);
+  V = glm::translate(V, glm::vec3(0, 0, -3.0f));
+
+  glm::mat4 P = glm::perspective(glm::radians(45.0f),
+                                 (float)width / (float)height, 0.1f, 100.0f);
+
   // Rendering Loop
   while (glfwWindowShouldClose(mWindow) == false) {
     if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(mWindow, true);
-
-    float t = glfwGetTime();
-
-    glm::mat4 T = glm::translate(glm::mat4(1.0), glm::vec3(0.5, 0.5, 0.0));
-    glm::mat4 R = glm::mat4_cast(
-        glm::angleAxis(t, glm::normalize(glm::vec3(0.0, 0.0, 1.0))));
-    glm::mat4 S = glm::scale(glm::mat4(1.0), glm::vec3(0.5));
-    glm::mat4 S2 = glm::scale(glm::mat4(1.0), glm::vec3(sin(t)));
-
-    glm::mat4 M1 = R * S;
-    glm::mat4 M2 = T * S2;
 
     // Background Fill Color
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
@@ -152,16 +151,11 @@ int main() {
     glBindVertexArray(VAO1);
 
     p1.use();
-    p1.setMat("trans", M1);
-    float offset = sin(t) * 0.5;
-    p1.setFloat("uniOff", offset);
+    p1.setMat("model", M);
+    p1.setMat("view", V);
+    p1.setMat("proj", P);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    p2.use();
-    p2.setMat("trans", M2);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,
-                   (void *)(6 * sizeof(float)));
 
     // Flip Buffers and Draw
     glfwSwapBuffers(mWindow);
