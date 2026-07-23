@@ -130,7 +130,7 @@ int main() {
   M = glm::rotate(M, glm::radians(-55.0f), glm::vec3(1.0, 0.0, 0.0));
 
   glm::mat4 V(1.0f);
-  V = glm::translate(V, glm::vec3(0, 0, -5.0f));
+  V = glm::lookAt(glm::vec3(5, 5, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
   glm::mat4 P = glm::perspective(glm::radians(45.0f),
                                  (float)width / (float)height, 0.1f, 100.0f);
@@ -145,8 +145,8 @@ int main() {
     glm::mat4 M2 =
         glm::rotate(M, glm::radians(100 * t), glm::vec3(0.0, 1.0, 0.0));
 
-    P = glm::perspective(glm::radians(abs(sin(t)) * 40.0f + 40.0f),
-                         (float)width / (float)height, 0.1f, 100.0f);
+    V = glm::lookAt(glm::vec3(15 * sin(t), 5, 10 * cos(t)), glm::vec3(0, 0, 0),
+                    glm::vec3(0, 1, 0));
 
     // Background Fill Color
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
