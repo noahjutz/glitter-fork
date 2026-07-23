@@ -11,9 +11,11 @@
 // Standard Headers
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
+void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 glm::mat4 transformation();
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
@@ -46,6 +48,8 @@ int main() {
   fprintf(stderr, "OpenGL %s\n", glGetString(GL_VERSION));
 
   glfwSetFramebufferSizeCallback(mWindow, framebuffer_size_callback);
+  glfwSetCursorPosCallback(mWindow, mouse_callback);
+  glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   glEnable(GL_DEPTH_TEST);
 
@@ -201,4 +205,8 @@ void processInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     cameraPos +=
         glm::normalize(glm::cross(cameraFront, cameraUp)) * delta * cameraSpeed;
+}
+
+void mouse_callback(GLFWwindow *, double xpos, double ypos) {
+  std::cout << "x" << xpos << " y" << ypos << std::endl;
 }
