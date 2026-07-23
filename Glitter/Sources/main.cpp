@@ -61,12 +61,6 @@ int main() {
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
 
-  unsigned int EBO1;
-  glGenBuffers(1, &EBO1);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO1);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
-               GL_STATIC_DRAW);
-
   // Create shader program
 
   Shader p1 =
@@ -155,11 +149,17 @@ int main() {
     glBindVertexArray(VAO1);
 
     p1.use();
-    p1.setMat("model", M);
     p1.setMat("view", V);
     p1.setMat("proj", P);
 
+    p1.setMat("model", M);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    for (int i = 0; i < 10; i++) {
+      glm::mat4 T = glm::translate(glm::mat4(1.0f), cubePositions[i]);
+      p1.setMat("model", T * M);
+      glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
 
     // Flip Buffers and Draw
     glfwSwapBuffers(mWindow);
