@@ -140,7 +140,13 @@ int main() {
     if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(mWindow, true);
 
-    M = glm::rotate(M, glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0));
+    float t = glfwGetTime();
+
+    glm::mat4 M2 =
+        glm::rotate(M, glm::radians(100 * t), glm::vec3(0.0, 1.0, 0.0));
+
+    P = glm::perspective(glm::radians(abs(sin(t)) * 40.0f + 40.0f),
+                         (float)width / (float)height, 0.1f, 100.0f);
 
     // Background Fill Color
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
@@ -152,12 +158,12 @@ int main() {
     p1.setMat("view", V);
     p1.setMat("proj", P);
 
-    p1.setMat("model", M);
+    p1.setMat("model", M2);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     for (int i = 0; i < 10; i++) {
       glm::mat4 T = glm::translate(glm::mat4(1.0f), cubePositions[i]);
-      p1.setMat("model", T * M);
+      p1.setMat("model", T * M2);
       glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 
