@@ -25,6 +25,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   // glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+  glfwWindowHint(GLFW_DEPTH_BITS, 24);
   auto mWindow = glfwCreateWindow(mWidth, mHeight, "OpenGL", nullptr, nullptr);
 
   // Check for Valid Context
@@ -39,6 +40,8 @@ int main() {
   fprintf(stderr, "OpenGL %s\n", glGetString(GL_VERSION));
 
   glfwSetFramebufferSizeCallback(mWindow, framebuffer_size_callback);
+
+  glEnable(GL_DEPTH_TEST);
 
   // Load vertices and indices
 
@@ -127,11 +130,13 @@ int main() {
   glGenerateMipmap(GL_TEXTURE_2D);
   stbi_image_free(data);
 
+  // Transformation matrices
+
   glm::mat4 M(1.0f);
   M = glm::rotate(M, glm::radians(-55.0f), glm::vec3(1.0, 0.0, 0.0));
 
   glm::mat4 V(1.0f);
-  V = glm::translate(V, glm::vec3(0, 0, -3.0f));
+  V = glm::translate(V, glm::vec3(0, 0, -5.0f));
 
   glm::mat4 P = glm::perspective(glm::radians(45.0f),
                                  (float)width / (float)height, 0.1f, 100.0f);
@@ -141,9 +146,11 @@ int main() {
     if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(mWindow, true);
 
+    M = glm::rotate(M, glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0));
+
     // Background Fill Color
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glBindVertexArray(VAO1);
 
