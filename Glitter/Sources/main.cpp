@@ -1,7 +1,6 @@
 // Local Headers
 #include "glitter.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
-#include "glm/ext/vector_float4.hpp"
 #include "shader.hpp"
 #include "vertices.hpp"
 
@@ -14,7 +13,14 @@
 #include <cstdlib>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void processInput(GLFWwindow *window);
 glm::mat4 transformation();
+
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+float lastProcessInput = 0.0f;
 
 int main() {
 
@@ -130,7 +136,6 @@ int main() {
   M = glm::rotate(M, glm::radians(-55.0f), glm::vec3(1.0, 0.0, 0.0));
 
   glm::mat4 V(1.0f);
-  V = glm::lookAt(glm::vec3(5, 5, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
   glm::mat4 P = glm::perspective(glm::radians(45.0f),
                                  (float)width / (float)height, 0.1f, 100.0f);
@@ -140,13 +145,14 @@ int main() {
     if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
       glfwSetWindowShouldClose(mWindow, true);
 
+    processInput(mWindow);
+
+    V = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+
     float t = glfwGetTime();
 
     glm::mat4 M2 =
         glm::rotate(M, glm::radians(100 * t), glm::vec3(0.0, 1.0, 0.0));
-
-    V = glm::lookAt(glm::vec3(15 * sin(t), 5, 10 * cos(t)), glm::vec3(0, 0, 0),
-                    glm::vec3(0, 1, 0));
 
     // Background Fill Color
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
@@ -177,4 +183,22 @@ int main() {
 
 void framebuffer_size_callback(GLFWwindow *, int width, int height) {
   glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow *window) {
+  const float cameraSpeed = 5;
+  float t = glfwGetTime();
+  float delta = t - lastProcessInput;
+  lastProcessInput = t;
+
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    cameraPos += delta * cameraSpeed * cameraFront;
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    cameraPos -= delta * cameraSpeed * cameraFront;
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    cameraPos -=
+        glm::normalize(glm::cross(cameraFront, cameraUp)) * delta * cameraSpeed;
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    cameraPos +=
+        glm::normalize(glm::cross(cameraFront, cameraUp)) * delta * cameraSpeed;
 }
