@@ -27,6 +27,8 @@ glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraDir = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
 float lastProcessInput = 0.0f;
 
 int main() {
@@ -59,12 +61,14 @@ int main() {
   glEnable(GL_DEPTH_TEST);
   glLineWidth(5);
 
-  // Load mesh
+  // Load VAOs
 
   unsigned int VAO[2];
   glGenVertexArrays(2, VAO);
   unsigned int VBO[2];
   glGenBuffers(2, VBO);
+
+  // VAO 1: Cube
 
   glBindVertexArray(VAO[0]);
   glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
@@ -75,17 +79,30 @@ int main() {
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(2);
 
+  // VAO 2: Light Source Cube
+
+  glBindVertexArray(VAO[1]);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+  glEnableVertexAttribArray(0);
+
   // Create shader program
 
-  Shader p1 =
+  Shader p_material =
       Shader("Glitter/Shaders/default.vert", "Glitter/Shaders/textured.frag");
 
-  p1.use();
-  p1.setInt("texture1", 0);
-  p1.setInt("texture2", 1);
+  p_material.use();
+  p_material.setInt("texture1", 0);
+  p_material.setInt("texture2", 1);
+  p_material.setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.3f));
+  p_material.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
-  Shader p2 =
-      Shader("Glitter/Shaders/default.vert", "Glitter/Shaders/default.frag");
+  Shader p_light = Shader("Glitter/Shaders/default.vert",
+                          "Glitter/Shaders/light_source.frag");
+
+  p_light.use();
+  p_light.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+  p_material.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
   // Textures
 
@@ -143,14 +160,23 @@ int main() {
 
   // Transformation matrices
 
-  glm::mat4 M(1.0f);
-  // M = glm::rotate(M, glm::radians(-55.0f), glm::vec3(1.0, 0.0, 0.0));
-  M = glm::scale(M, glm::vec3(50.0, 50.0, 40.0));
+  // View, Projection
 
   glm::mat4 V(1.0f);
 
   glm::mat4 P = glm::perspective(glm::radians(45.0f),
                                  (float)width / (float)height, 0.1f, 100.0f);
+
+  // Object
+
+  glm::mat4 M(1.0f);
+  M = glm::scale(M, glm::vec3(35.0f));
+
+  // Light source
+
+  glm::mat4 M_L(1.0f);
+  M_L = glm::translate(M_L, lightPos);
+  M_L = glm::scale(M_L, glm::vec3(0.2f));
 
   // Rendering Loop
   while (glfwWindowShouldClose(mWindow) == false) {
@@ -167,12 +193,18 @@ int main() {
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    p1.use();
-    p1.setMat("view", V);
-    p1.setMat("proj", P);
-    p1.setMat("model", M);
-
+    p_material.use();
+    p_material.setMat("view", V);
+    p_material.setMat("proj", P);
+    p_material.setMat("model", M);
     glBindVertexArray(VAO[0]);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    p_light.use();
+    p_light.setMat("view", V);
+    p_light.setMat("proj", P);
+    p_light.setMat("model", M_L);
+    glBindVertexArray(VAO[1]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Flip Buffers and Draw
