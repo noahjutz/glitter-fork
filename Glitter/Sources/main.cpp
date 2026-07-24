@@ -143,10 +143,7 @@ int main() {
   // Transformation matrices
 
   glm::mat4 M(1.0f);
-  // M = glm::rotate(M, glm::radians(-55.0f), glm::vec3(1.0, 0.0, 0.0));
-  glm::mat4 Ms = glm::scale(M, glm::vec3(10.0, 1.0, 1.0));
-  glm::mat4 Mt = glm::translate(M, glm::vec3(5.0, 0.0, 0.0));
-  M = Mt * Ms;
+  M = glm::rotate(M, glm::radians(-55.0f), glm::vec3(1.0, 0.0, 0.0));
 
   glm::mat4 V(1.0f);
 
@@ -160,21 +157,18 @@ int main() {
 
     processInput(mWindow);
 
-    V = glm::lookAt(glm::vec3(0.0f), cameraDir, cameraUp);
+    V = glm::lookAt(cameraPos, cameraPos + cameraDir, cameraUp);
 
     float t = glfwGetTime();
-
-    glm::mat4 R = V;
 
     // Background Fill Color
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     p1.use();
-    p1.setMat("view",
-              glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -10.0f)));
+    p1.setMat("view", V);
     p1.setMat("proj", P);
-    p1.setMat("model", R * M);
+    p1.setMat("model", M);
 
     glBindVertexArray(VAO[0]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
