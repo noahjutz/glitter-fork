@@ -16,10 +16,13 @@
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-glm::mat4 transformation();
+
+double xMouse = 0.0;
+double yMouse = 0.0;
+double yLast = 0.0f;
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraDir = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 float lastProcessInput = 0.0f;
@@ -151,7 +154,7 @@ int main() {
 
     processInput(mWindow);
 
-    V = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+    V = glm::lookAt(cameraPos, cameraPos + cameraDir, cameraUp);
 
     float t = glfwGetTime();
 
@@ -196,17 +199,29 @@ void processInput(GLFWwindow *window) {
   lastProcessInput = t;
 
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    cameraPos += delta * cameraSpeed * cameraFront;
+    cameraPos += delta * cameraSpeed * cameraDir;
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    cameraPos -= delta * cameraSpeed * cameraFront;
+    cameraPos -= delta * cameraSpeed * cameraDir;
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     cameraPos -=
-        glm::normalize(glm::cross(cameraFront, cameraUp)) * delta * cameraSpeed;
+        glm::normalize(glm::cross(cameraDir, cameraUp)) * delta * cameraSpeed;
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     cameraPos +=
-        glm::normalize(glm::cross(cameraFront, cameraUp)) * delta * cameraSpeed;
+        glm::normalize(glm::cross(cameraDir, cameraUp)) * delta * cameraSpeed;
 }
 
 void mouse_callback(GLFWwindow *, double xpos, double ypos) {
-  std::cout << "x" << xpos << " y" << ypos << std::endl;
+  const float sensitivity = 0.005f;
+
+  double yDelta = yLast - ypos;
+  yLast = ypos;
+
+  xMouse = xpos * sensitivity;
+  yMouse = std::clamp(yMouse + yDelta * sensitivity, -(M_PI_2 - 0.1),
+                      (M_PI_2 - 0.1));
+
+  cameraDir.x = cos(xMouse) * cos(yMouse);
+  cameraDir.y = sin(yMouse);
+  cameraDir.z = sin(xMouse) * cos(yMouse);
+  cameraDir = normalize(cameraDir);
 }
