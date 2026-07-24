@@ -16,6 +16,7 @@
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void processInput(GLFWwindow *window);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+glm::mat4 myLookAt(glm::vec3 pos, glm::vec3 g, glm::vec3 t);
 
 double xMouse = 0.0;
 double yMouse = 0.0;
@@ -143,7 +144,8 @@ int main() {
   // Transformation matrices
 
   glm::mat4 M(1.0f);
-  M = glm::rotate(M, glm::radians(-55.0f), glm::vec3(1.0, 0.0, 0.0));
+  // M = glm::rotate(M, glm::radians(-55.0f), glm::vec3(1.0, 0.0, 0.0));
+  M = glm::scale(M, glm::vec3(50.0, 50.0, 40.0));
 
   glm::mat4 V(1.0f);
 
@@ -157,7 +159,7 @@ int main() {
 
     processInput(mWindow);
 
-    V = glm::lookAt(cameraPos, cameraPos + cameraDir, cameraUp);
+    V = myLookAt(cameraPos, cameraPos + cameraDir, cameraUp);
 
     float t = glfwGetTime();
 
@@ -221,4 +223,16 @@ void mouse_callback(GLFWwindow *, double xpos, double ypos) {
   cameraDir.y = sin(yMouse);
   cameraDir.z = sin(xMouse) * cos(yMouse);
   cameraDir = normalize(cameraDir);
+}
+
+glm::mat4 myLookAt(glm::vec3 pos, glm::vec3 target, glm::vec3 t) {
+  glm::vec3 g = -glm::normalize(target - pos);
+  glm::vec3 r = glm::normalize(glm::cross(t, g));
+  glm::vec3 y = glm::cross(g, r);
+
+  glm::mat4 V = glm::mat4(glm::transpose(glm::mat3(r, g, y)));
+
+  glm::mat4 T = glm::translate(glm::mat4(1.0f), -pos);
+
+  return V * T;
 }
