@@ -56,23 +56,22 @@ int main() {
   glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   glEnable(GL_DEPTH_TEST);
+  glLineWidth(5);
 
-  // Load vertices and indices
+  // Load mesh
 
-  unsigned int VAO1;
-  glGenVertexArrays(1, &VAO1);
-  glBindVertexArray(VAO1);
+  unsigned int VAO[2];
+  glGenVertexArrays(2, VAO);
+  unsigned int VBO[2];
+  glGenBuffers(2, VBO);
 
-  unsigned int VBO1;
-  glGenBuffers(1, &VBO1);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+  glBindVertexArray(VAO[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                         (void *)(3 * sizeof(float)));
   glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
 
   // Create shader program
@@ -87,9 +86,14 @@ int main() {
   Shader p2 =
       Shader("Glitter/Shaders/default.vert", "Glitter/Shaders/default.frag");
 
-  // Texture 1: Container
+  // Textures
 
   stbi_set_flip_vertically_on_load(true);
+
+  unsigned int textures[2];
+  glGenTextures(2, textures);
+
+  // Texture 1: Container
 
   int width, height, nrChannels;
   unsigned char *data = stbi_load("Glitter/Resources/container.jpg", &width,
@@ -99,8 +103,6 @@ int main() {
     return 1;
   }
 
-  unsigned int textures[2];
-  glGenTextures(2, textures);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, textures[0]);
 
@@ -159,27 +161,17 @@ int main() {
 
     float t = glfwGetTime();
 
-    glm::mat4 M2 =
-        glm::rotate(M, glm::radians(100 * t), glm::vec3(0.0, 1.0, 0.0));
-
     // Background Fill Color
     glClearColor(0.65f, 0.95f, 0.55f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBindVertexArray(VAO1);
-
     p1.use();
     p1.setMat("view", V);
     p1.setMat("proj", P);
+    p1.setMat("model", M);
 
-    p1.setMat("model", M2);
+    glBindVertexArray(VAO[0]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    for (int i = 0; i < 10; i++) {
-      glm::mat4 T = glm::translate(glm::mat4(1.0f), cubePositions[i]);
-      p1.setMat("model", T * M2);
-      glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
 
     // Flip Buffers and Draw
     glfwSwapBuffers(mWindow);
