@@ -19,7 +19,8 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 
 double xMouse = 0.0;
 double yMouse = 0.0;
-double yLast = 0.0f;
+double yLast = 0.0;
+double xLast = 0.0;
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraDir = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -214,9 +215,11 @@ void mouse_callback(GLFWwindow *, double xpos, double ypos) {
   const float sensitivity = 0.005f;
 
   double yDelta = yLast - ypos;
+  double xDelta = xpos - xLast;
   yLast = ypos;
+  xLast = xpos;
 
-  xMouse = xpos * sensitivity;
+  xMouse = xMouse + xDelta * sensitivity;
   yMouse = std::clamp(yMouse + yDelta * sensitivity, -(M_PI_2 - 0.1),
                       (M_PI_2 - 0.1));
 
