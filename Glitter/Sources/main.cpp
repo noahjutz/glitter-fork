@@ -102,7 +102,6 @@ int main() {
 
   p_light.use();
   p_light.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-  p_material.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
   // Textures
 
@@ -170,7 +169,7 @@ int main() {
   // Object
 
   glm::mat4 M(1.0f);
-  M = glm::scale(M, glm::vec3(35.0f));
+  M = glm::scale(M, glm::vec3(.5f));
 
   // Light source
 

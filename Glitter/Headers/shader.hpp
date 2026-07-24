@@ -103,6 +103,6 @@ inline void Shader::setMat(const std::string &name, glm::mat4 value) const {
 }
 
 inline void Shader::setVec3(const std::string &name, glm::vec3 value) const {
-  glUniform3fv(glGetUniformLocation(ID, name.c_str()), GL_FALSE,
+  glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1,
                glm::value_ptr(value));
 }
