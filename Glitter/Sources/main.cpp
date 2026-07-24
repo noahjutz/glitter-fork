@@ -191,16 +191,18 @@ void processInput(GLFWwindow *window) {
   float delta = t - lastProcessInput;
   lastProcessInput = t;
 
+  glm::vec3 sideways = glm::normalize(glm::cross(cameraDir, cameraUp));
+
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    cameraPos += delta * cameraSpeed * cameraDir;
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    cameraPos -= delta * cameraSpeed * cameraDir;
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    cameraPos -=
-        glm::normalize(glm::cross(cameraDir, cameraUp)) * delta * cameraSpeed;
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     cameraPos +=
-        glm::normalize(glm::cross(cameraDir, cameraUp)) * delta * cameraSpeed;
+        delta * cameraSpeed * glm::vec3(cameraDir.x, 0.0f, cameraDir.z);
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    cameraPos -=
+        delta * cameraSpeed * glm::vec3(cameraDir.x, 0.0f, cameraDir.z);
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    cameraPos -= delta * cameraSpeed * glm::vec3(sideways.x, 0.0f, sideways.z);
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    cameraPos += delta * cameraSpeed * glm::vec3(sideways.x, 0.0f, sideways.z);
 }
 
 void mouse_callback(GLFWwindow *, double xpos, double ypos) {
